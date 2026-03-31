@@ -10,7 +10,7 @@ to capture and analyze real-world brute-force attacks.
 - Full analyst report (PDF)
 
 ## Stack
-Cowrie · Python 3 · pandas · Folium · VPS Ubuntu 22.04
+Cowrie · Python 3 · pandas · Folium · VPS Ubuntu 24.04
 
 ## Status
 Work in progress — honeypot running, analysis coming soon.
