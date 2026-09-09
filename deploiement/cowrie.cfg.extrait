@@ -1,0 +1,12 @@
+# Seules les lignes reellement modifiees par rapport a cowrie.cfg.dist.
+# A reporter dans /home/cowrie/cowrie/etc/cowrie.cfg.
+
+[honeypot]
+# Nom affiche dans le shell simule. "svr04" par defaut est un marqueur connu
+# de Cowrie, autant mettre quelque chose de plus banal.
+hostname = ubuntu-server
+
+[ssh]
+# Ecoute directement sur le 22 (via authbind), pas sur le 2222 par defaut :
+# les bots qui scannent le 2222 savent deja a quoi ils ont affaire.
+listen_endpoints = tcp:22:interface=0.0.0.0

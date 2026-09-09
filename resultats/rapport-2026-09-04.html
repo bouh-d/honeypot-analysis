@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Honeypot Cowrie - rapport d'analyse</title>
+<style>
+body {
+  max-width: 46em;
+  margin: 2em auto;
+  padding: 0 1em;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #111;
+  background: #fff;
+}
+h1 { font-size: 1.4em; margin-bottom: 0.2em; }
+h2 { font-size: 1.05em; margin-top: 2em; }
+p.sous-titre { margin-top: 0; color: #555; font-size: 0.9em; }
+table { border-collapse: collapse; margin-bottom: 1em; width: 100%; }
+th, td { text-align: left; padding: 3px 10px 3px 0; border-bottom: 1px solid #ddd; }
+th { font-weight: normal; font-style: italic; color: #555; }
+td.n { text-align: right; white-space: nowrap; }
+td.v { font-family: Consolas, monospace; font-size: 0.85em; word-break: break-all; }
+td.vide { color: #777; font-style: italic; }
+table.heures { table-layout: fixed; }
+table.heures td { border: none; padding: 0 1px; vertical-align: bottom; }
+table.heures td.etiq { text-align: center; font-size: 0.7em; color: #777; padding-top: 2px; }
+table.heures div { background: #666; }
+p.note { color: #555; font-size: 0.9em; }
+@media print { body { margin: 0; } }
+</style>
+</head>
+<body>
+
+<h1>Honeypot SSH Cowrie - rapport d'analyse</h1>
+<p class="sous-titre">Periode du 2026-04-01 au 2026-09-04, soit 157 jours.
+Genere le 2026-09-04 13:47 UTC.</p>
+
+<table>
+<tr><td>Connexions</td><td class="n">690 259</td></tr><tr><td>Adresses IP distinctes</td><td class="n">15 400</td></tr><tr><td>Tentatives d'authentification</td><td class="n">688 917</td></tr><tr><td>dont refusees</td><td class="n">405 292</td></tr><tr><td>dont acceptees</td><td class="n">283 625 (41,2 %)</td></tr><tr><td>Sessions ayant lance une commande</td><td class="n">208 094</td></tr><tr><td>Commandes executees</td><td class="n">308 969</td></tr><tr><td>Fichiers deposes</td><td class="n">38 130</td></tr><tr><td>Ouvertures de tunnel demandees</td><td class="n">71 275</td></tr>
+</table>
+
+<h2>Connexions par heure (UTC)</h2>
+<table class="heures">
+<tr><td><div style="height:63px" title="00 h : 33275 connexions"></div></td><td><div style="height:90px" title="01 h : 47263 connexions"></div></td><td><div style="height:49px" title="02 h : 25800 connexions"></div></td><td><div style="height:49px" title="03 h : 25763 connexions"></div></td><td><div style="height:54px" title="04 h : 28265 connexions"></div></td><td><div style="height:51px" title="05 h : 26556 connexions"></div></td><td><div style="height:49px" title="06 h : 25947 connexions"></div></td><td><div style="height:48px" title="07 h : 25351 connexions"></div></td><td><div style="height:53px" title="08 h : 27579 connexions"></div></td><td><div style="height:48px" title="09 h : 25058 connexions"></div></td><td><div style="height:51px" title="10 h : 26828 connexions"></div></td><td><div style="height:43px" title="11 h : 22363 connexions"></div></td><td><div style="height:46px" title="12 h : 24121 connexions"></div></td><td><div style="height:49px" title="13 h : 25558 connexions"></div></td><td><div style="height:39px" title="14 h : 20384 connexions"></div></td><td><div style="height:51px" title="15 h : 26772 connexions"></div></td><td><div style="height:57px" title="16 h : 30185 connexions"></div></td><td><div style="height:57px" title="17 h : 30108 connexions"></div></td><td><div style="height:59px" title="18 h : 31137 connexions"></div></td><td><div style="height:82px" title="19 h : 43202 connexions"></div></td><td><div style="height:55px" title="20 h : 28755 connexions"></div></td><td><div style="height:49px" title="21 h : 25872 connexions"></div></td><td><div style="height:55px" title="22 h : 28664 connexions"></div></td><td><div style="height:68px" title="23 h : 35453 connexions"></div></td></tr>
+<tr><td class="etiq">00</td><td class="etiq">01</td><td class="etiq">02</td><td class="etiq">03</td><td class="etiq">04</td><td class="etiq">05</td><td class="etiq">06</td><td class="etiq">07</td><td class="etiq">08</td><td class="etiq">09</td><td class="etiq">10</td><td class="etiq">11</td><td class="etiq">12</td><td class="etiq">13</td><td class="etiq">14</td><td class="etiq">15</td><td class="etiq">16</td><td class="etiq">17</td><td class="etiq">18</td><td class="etiq">19</td><td class="etiq">20</td><td class="etiq">21</td><td class="etiq">22</td><td class="etiq">23</td></tr>
+</table>
+<p class="note">Maximum a 01 h (47 263 connexions), minimum a 14 h
+(20 384). Le rapport entre les deux est de 2,3.</p>
+
+<h2>Adresses IP les plus actives</h2>
+<table>
+<tr><th>Adresse</th><th class="n">Occurrences</th></tr>
+<tr><td class="v">87.106.134.4</td><td class="n">27 628</td></tr><tr><td class="v">94.156.104.232</td><td class="n">21 404</td></tr><tr><td class="v">87.106.13.39</td><td class="n">18 302</td></tr><tr><td class="v">152.32.186.39</td><td class="n">16 710</td></tr><tr><td class="v">94.154.35.215</td><td class="n">12 619</td></tr><tr><td class="v">45.156.87.254</td><td class="n">7 557</td></tr><tr><td class="v">45.156.87.204</td><td class="n">5 762</td></tr><tr><td class="v">185.246.128.133</td><td class="n">5 654</td></tr><tr><td class="v">2.57.121.112</td><td class="n">5 636</td></tr><tr><td class="v">2.57.121.25</td><td class="n">5 516</td></tr><tr><td class="v">45.156.87.166</td><td class="n">5 342</td></tr><tr><td class="v">91.92.42.7</td><td class="n">5 085</td></tr><tr><td class="v">220.92.117.221</td><td class="n">5 074</td></tr><tr><td class="v">91.92.42.52</td><td class="n">4 940</td></tr><tr><td class="v">45.156.87.13</td><td class="n">4 588</td></tr></table>
+<h2>Identifiants testes</h2>
+<table>
+<tr><th>Identifiant</th><th class="n">Occurrences</th></tr>
+<tr><td class="v">root</td><td class="n">325 965</td></tr><tr><td class="v">345gs5662d34</td><td class="n">36 444</td></tr><tr><td class="v">admin</td><td class="n">20 796</td></tr><tr><td class="v">ubuntu</td><td class="n">16 144</td></tr><tr><td class="v">user</td><td class="n">14 515</td></tr><tr><td class="v">test</td><td class="n">6 482</td></tr><tr><td class="v">deploy</td><td class="n">5 805</td></tr><tr><td class="v">postgres</td><td class="n">3 718</td></tr><tr><td class="v">almeriawesternfilmfestival</td><td class="n">3 705</td></tr><tr><td class="v">user1</td><td class="n">3 154</td></tr><tr><td class="v">oracle</td><td class="n">2 966</td></tr><tr><td class="v">ftpuser</td><td class="n">2 844</td></tr><tr><td class="v">dev</td><td class="n">2 833</td></tr><tr><td class="v">awff</td><td class="n">2 826</td></tr><tr><td class="v">debian</td><td class="n">2 805</td></tr></table>
+<h2>Mots de passe testes</h2>
+<table>
+<tr><th>Mot de passe</th><th class="n">Occurrences</th></tr>
+<tr><td class="v"></td><td class="n">41 637</td></tr><tr><td class="v">345gs5662d34</td><td class="n">36 444</td></tr><tr><td class="v">3245gs5662d34</td><td class="n">36 266</td></tr><tr><td class="v">admin</td><td class="n">34 419</td></tr><tr><td class="v">123456</td><td class="n">31 462</td></tr><tr><td class="v">123</td><td class="n">13 229</td></tr><tr><td class="v">1234</td><td class="n">10 227</td></tr><tr><td class="v">password</td><td class="n">7 542</td></tr><tr><td class="v">12345678</td><td class="n">7 383</td></tr><tr><td class="v">1</td><td class="n">6 922</td></tr><tr><td class="v">12345</td><td class="n">6 239</td></tr><tr><td class="v">root</td><td class="n">5 778</td></tr><tr><td class="v">123456789</td><td class="n">4 530</td></tr><tr><td class="v">abc123</td><td class="n">2 962</td></tr><tr><td class="v">111111</td><td class="n">2 692</td></tr></table>
+<h2>Couples identifiant / mot de passe</h2>
+<table>
+<tr><th>Couple</th><th class="n">Occurrences</th></tr>
+<tr><td class="v">root / </td><td class="n">40 723</td></tr><tr><td class="v">345gs5662d34 / 345gs5662d34</td><td class="n">36 444</td></tr><tr><td class="v">root / 3245gs5662d34</td><td class="n">36 257</td></tr><tr><td class="v">root / admin</td><td class="n">31 650</td></tr><tr><td class="v">admin / admin</td><td class="n">1 428</td></tr><tr><td class="v">root / root</td><td class="n">917</td></tr><tr><td class="v">ubuntu / ubuntu</td><td class="n">915</td></tr><tr><td class="v">root / 123456</td><td class="n">857</td></tr><tr><td class="v">root / 12345</td><td class="n">826</td></tr><tr><td class="v">root / 1234</td><td class="n">768</td></tr><tr><td class="v">admin / </td><td class="n">732</td></tr><tr><td class="v">root / 111111</td><td class="n">731</td></tr><tr><td class="v">root / 123</td><td class="n">712</td></tr><tr><td class="v">solana / solana</td><td class="n">696</td></tr><tr><td class="v">root / 12345678</td><td class="n">688</td></tr></table>
+<h2>Clients SSH annonces</h2>
+<table>
+<tr><th>Banniere</th><th class="n">Occurrences</th></tr>
+<tr><td class="v">SSH-2.0-Go</td><td class="n">418 378</td></tr><tr><td class="v">SSH-2.0-libssh_0.9.6</td><td class="n">127 998</td></tr><tr><td class="v">SSH-2.0-libssh_0.11.1</td><td class="n">27 858</td></tr><tr><td class="v">SSH-2.0-libssh2_1.8.1</td><td class="n">22 615</td></tr><tr><td class="v">SSH-2.0-libssh_0.12.0</td><td class="n">20 306</td></tr><tr><td class="v">SSH-2.0-libssh2_1.11.0</td><td class="n">8 888</td></tr><tr><td class="v">SSH-2.0-OpenSSH_7.4</td><td class="n">5 286</td></tr><tr><td class="v">SSH-2.0-OpenSSH</td><td class="n">3 315</td></tr><tr><td class="v">SSH-2.0-AsyncSSH_2.1.0</td><td class="n">2 657</td></tr><tr><td class="v">SSH-2.0-libssh2_1.9.0</td><td class="n">2 101</td></tr><tr><td class="v">SSH-2.0-PuTTY_Release_0.83</td><td class="n">1 280</td></tr><tr><td class="v">SSH-2.0-libssh2_1.11.1</td><td class="n">935</td></tr><tr><td class="v">SSH-2.0-Granados-1.0</td><td class="n">743</td></tr><tr><td class="v">SSH-2.0-PUTTY</td><td class="n">707</td></tr><tr><td class="v">SSH-2.0-OpenSSH_8.2</td><td class="n">592</td></tr></table>
+<h2>Commandes les plus frequentes</h2>
+<table>
+<tr><th>Commande</th><th class="n">Occurrences</th></tr>
+<tr><td class="v">echo -e &quot;\x6F\x6B&quot;</td><td class="n">85 739</td></tr><tr><td class="v">uname -s -v -n -r -m</td><td class="n">56 242</td></tr><tr><td class="v">cd ~; chattr -ia .ssh; lockr -ia .ssh</td><td class="n">37 393</td></tr><tr><td class="v">cd ~ &amp;&amp; rm -rf .ssh &amp;&amp; mkdir .ssh &amp;&amp; echo &quot;ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEArDp4cun2lhr4KUhBGE7VvAcwdli2a8dbnrTOrbMz1+5O73fcBOx8NVbUT0bUanUV9tJ2/9p7+vD0EpZ3Tz/+0kX34uAx1RV/75GVOmNx+9EuWOnvNoaJe0QXx</td><td class="n">37 172</td></tr><tr><td class="v">uname -a</td><td class="n">10 037</td></tr><tr><td class="v">uname -s -v -n -m 2 &gt; /dev/null</td><td class="n">6 754</td></tr><tr><td class="v">export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH; uname=$(uname -s -v -n -m 2&gt;/dev/null || /bin/uname -s -v -n -m 2&gt;/dev/null || /usr/bin/uname -s -v -n -m 2&gt;/dev/null ||</td><td class="n">5 957</td></tr><tr><td class="v">/bin/uname -s -v -n -m 2 &gt; /dev/null</td><td class="n">5 957</td></tr><tr><td class="v">/usr/bin/uname -s -v -n -m 2 &gt; /dev/null</td><td class="n">5 957</td></tr><tr><td class="v">busybox uname -s -v -n -m 2 &gt; /dev/null</td><td class="n">5 957</td></tr><tr><td class="v">( [ -f /proc/version ]</td><td class="n">5 957</td></tr><tr><td class="v">[ -f /proc/version ]</td><td class="n">5 957</td></tr></table>
+<h2>Empreintes SHA-256 des fichiers deposes</h2>
+<table>
+<tr><th>Empreinte</th><th class="n">Occurrences</th></tr>
+<tr><td class="v">a8460f446be540410004b1a8db4083773fa46f7fe76fa84219c93daa1669f8f2</td><td class="n">37 095</td></tr><tr><td class="v">01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b</td><td class="n">559</td></tr><tr><td class="v">8a68d1c08ea31250063f70b1ccb5051db1f7ab6e17d46e9dd3cc292b9849878b</td><td class="n">242</td></tr><tr><td class="v">80c3fe2ae1062abf56456f52518bd670f9ec3917b7f85e152b347ac6b6faf880</td><td class="n">68</td></tr><tr><td class="v">f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2</td><td class="n">16</td></tr><tr><td class="v">e27a3a5a4c65732e788b025cc2566ebae655359408eda61ff1ce6f4d6a823441</td><td class="n">8</td></tr><tr><td class="v">183fb8e38eeb1160f392f6d3c473752bc5b183a5c744f23a31dcc5ae2fda87f5</td><td class="n">8</td></tr><tr><td class="v">287962211de7bcadb39f7576732438b43ee6aab420ec23c29a9d12a8151a547f</td><td class="n">8</td></tr><tr><td class="v">6d2b2f72bc45c6276818298de8b5f24140947c808a89c72fcf63d5e48281ada9</td><td class="n">6</td></tr><tr><td class="v">1ed8ba8b6936fd378c18a7aafeef6db8575f8ce679ab93ae7c1b36493f7bd65b</td><td class="n">6</td></tr><tr><td class="v">679108c9ad9b5407115b6ffbdc84a26d8a15ce1d097d0a0050e4671d9ace6655</td><td class="n">4</td></tr><tr><td class="v">58189cbd4e6dc0c7d8e66b6a6f75652fc9f4afc7ce0eba7d67d8c3feb0d5381f</td><td class="n">4</td></tr><tr><td class="v">8026e59c5c481b8280404ab39e850bb4f412ae43cdd9cfbc8a1dbaa69302903e</td><td class="n">4</td></tr><tr><td class="v">dfc3975a32648e030e179a9d941422ca66755ce6121d5be17e3c4c4330f4a1fc</td><td class="n">3</td></tr><tr><td class="v">45bff40a22d87575c6dd47fb5a1cdade428c08771f50c357ac9001f3f6f1279a</td><td class="n">2</td></tr></table>
+<h2>Cibles des tentatives de tunnel</h2>
+<table>
+<tr><th>Destination</th><th class="n">Occurrences</th></tr>
+<tr><td class="v">2620:1ec:33::10:80</td><td class="n">5 148</td></tr><tr><td class="v">150.171.27.10:80</td><td class="n">5 136</td></tr><tr><td class="v">150.171.28.10:80</td><td class="n">5 070</td></tr><tr><td class="v">2620:1ec:33:1::10:80</td><td class="n">5 058</td></tr><tr><td class="v">2001:4998:124:1507::f000:80</td><td class="n">2 462</td></tr><tr><td class="v">2001:4998:24:120d::1:1:80</td><td class="n">2 428</td></tr><tr><td class="v">2001:4998:24:120d::1:0:80</td><td class="n">2 387</td></tr><tr><td class="v">2001:4998:44:3507::8000:80</td><td class="n">2 375</td></tr><tr><td class="v">2001:4998:44:3507::8001:80</td><td class="n">2 344</td></tr><tr><td class="v">2001:4998:124:1507::f001:80</td><td class="n">2 315</td></tr><tr><td class="v">74.6.143.26:80</td><td class="n">2 286</td></tr><tr><td class="v">74.6.143.25:80</td><td class="n">2 207</td></tr><tr><td class="v">98.137.11.163:80</td><td class="n">2 201</td></tr><tr><td class="v">98.137.11.164:80</td><td class="n">2 165</td></tr><tr><td class="v">74.6.231.21:80</td><td class="n">2 159</td></tr></table>
+<h2>Techniques ATT&amp;CK declenchees</h2>
+<table>
+<tr><th>Technique</th><th class="n">Occurrences</th></tr>
+<tr><td class="v">T1082 System Information Discovery</td><td class="n">124 683</td></tr><tr><td class="v">T1070.004 Indicator Removal: File Deletion</td><td class="n">43 583</td></tr><tr><td class="v">T1098.004 SSH Authorized Keys</td><td class="n">37 460</td></tr><tr><td class="v">T1033 System Owner/User Discovery</td><td class="n">8 833</td></tr><tr><td class="v">T1222.002 File and Directory Permissions Modification</td><td class="n">5 959</td></tr><tr><td class="v">T1059.004 Unix Shell</td><td class="n">5 936</td></tr><tr><td class="v">T1083 File and Directory Discovery</td><td class="n">3 187</td></tr><tr><td class="v">T1057 Process Discovery</td><td class="n">1 272</td></tr><tr><td class="v">T1489 Service Stop</td><td class="n">560</td></tr><tr><td class="v">T1053.003 Scheduled Task/Job: Cron</td><td class="n">547</td></tr><tr><td class="v">T1016 System Network Configuration Discovery</td><td class="n">503</td></tr><tr><td class="v">T1105 Ingress Tool Transfer</td><td class="n">297</td></tr><tr><td class="v">T1136.001 Create Account: Local Account</td><td class="n">186</td></tr><tr><td class="v">T1098 Account Manipulation</td><td class="n">67</td></tr><tr><td class="v">T1496 Resource Hijacking</td><td class="n">2</td></tr></table>
+
+
+<p class="note">Produit par analyse.py puis rapport.py a partir des journaux
+JSON de Cowrie. Les journaux bruts et les fichiers deposes par les attaquants
+restent sur le serveur.</p>
+
+</body>
+</html>
