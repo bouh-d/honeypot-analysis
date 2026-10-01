@@ -1,0 +1,11 @@
+[Unit]
+Description=Supervision du honeypot toutes les 15 minutes
+
+[Timer]
+OnCalendar=*:0/15
+AccuracySec=1min
+# Rattrape un passage manqué si la machine était éteinte.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -25,6 +25,10 @@ id_ed25519*
 secrets/
 credentials/
 
+# Configuration réelle de la supervision : elle contient le nom du canal ntfy,
+# qui fait office de secret. Seul le fichier .exemple est versionné.
+honeypot-supervision.conf
+
 # Journaux bruts et artefacts récupérés sur le honeypot.
 # Ils restent sur le serveur : plusieurs gigaoctets pour les journaux, et les
 # binaires déposés par les attaquants n'ont rien à faire dans un dépôt public.

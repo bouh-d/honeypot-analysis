@@ -1,0 +1,43 @@
+[Unit]
+Description=Supervision du honeypot (espace disque, fraicheur des journaux)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/honeypot/surveiller.sh
+StateDirectory=honeypot-supervision
+
+# Tourne en root pour rester indépendant du compte cowrie, celui que viserait
+# un attaquant sorti du shell simulé : un service qu'il pourrait couper ne
+# servirait à rien. Les droits sont ensuite réduits au strict nécessaire.
+#
+# Les trois capacités conservées servent uniquement à la compression : écrire
+# dans le dossier des journaux, qui appartient à cowrie, et rendre les fichiers
+# compressés à leur propriétaire d'origine.
+CapabilityBoundingSet=CAP_DAC_OVERRIDE CAP_CHOWN CAP_FOWNER
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/cowrie/cowrie/var/log/cowrie
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+SystemCallArchitectures=native
+
+# Garde-fous : la compression de plusieurs centaines de fichiers ne doit pas
+# priver Cowrie de mémoire sur une machine à 1 Go.
+MemoryMax=128M
+CPUQuota=50%
+Nice=15
+TimeoutStartSec=20min

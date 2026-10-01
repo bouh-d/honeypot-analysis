@@ -1,0 +1,29 @@
+# Configuration de scripts/surveiller.sh.
+#
+# À copier vers /etc/honeypot-supervision.conf, propriétaire root, mode 600 :
+#   install -m 600 -o root -g root honeypot-supervision.conf.exemple \
+#       /etc/honeypot-supervision.conf
+#
+# Format CLE=valeur, sans guillemets ni espaces autour du signe égal. Le
+# fichier n'est pas exécuté : seules les clés ci-dessous sont lues.
+
+# Canal ntfy. Le nom du canal fait office de secret : quiconque le connaît peut
+# lire les alertes et en publier. Le générer aléatoirement, par exemple :
+#   printf 'hp-%s\n' "$(head -c 32 /dev/urandom | base64 | tr -dc 'A-Za-z0-9' | head -c 24)"
+NTFY_SERVEUR=https://ntfy.sh
+NTFY_TOPIC=
+
+# Pourcentage d'occupation à partir duquel les journaux sont compressés.
+# Une alerte n'est envoyée que si la compression ne suffit pas.
+SEUIL_DISQUE=80
+
+# Âge maximal, en minutes, du dernier événement valide. Le trafic est continu,
+# de l'ordre de trois événements par minute : trente minutes de silence ne
+# sont jamais normales.
+SEUIL_FRAICHEUR_MIN=30
+
+# Délai entre deux rappels tant qu'une anomalie persiste.
+RAPPEL_HEURES=6
+
+JOURNAUX=/home/cowrie/cowrie/var/log/cowrie
+COMPRESSER=/opt/honeypot/compresser-journaux.sh
