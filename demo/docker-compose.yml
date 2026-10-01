@@ -1,0 +1,57 @@
+# Instance de démonstration, jetable et non exposée.
+#
+# Ceci ne décrit PAS la production. Le honeypot réel tourne sans conteneur,
+# directement en service systemd sur un VPS (voir docs/architecture.md). Ce
+# fichier existe pour qu'on puisse voir le fonctionnement et produire des
+# journaux au format attendu sans rien exposer sur Internet.
+#
+# Le port est volontairement lié à 127.0.0.1 : rien n'est joignable depuis
+# l'extérieur de la machine.
+
+services:
+  cowrie-demo:
+    image: cowrie/cowrie:latest
+    container_name: cowrie-demo
+    # 2222 dans le conteneur, publié uniquement sur la boucle locale.
+    ports:
+      - "127.0.0.1:2222:2222"
+    volumes:
+      - cowrie-var:/cowrie/cowrie-git/var
+      - cowrie-etc:/cowrie/cowrie-git/etc
+    # L'image tourne déjà sous l'UID 999 (compte cowrie), jamais en root.
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    # Un honeypot à faible interaction n'exécute rien : ces plafonds sont
+    # larges par rapport au besoin réel et servent de garde-fou.
+    mem_limit: 512m
+    cpus: 0.5
+    pids_limit: 256
+    restart: unless-stopped
+    # Évite qu'une démonstration oubliée remplisse le disque de l'hôte, ce qui
+    # est précisément ce qui est arrivé en production le 25 septembre 2026.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test:
+        - CMD
+        - python3
+        - -c
+        - "import socket; socket.create_connection(('127.0.0.1', 2222), 3).close()"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+    # read_only: true n'est pas activé ici. Cowrie écrit dans var/ (journaux,
+    # artefacts, pidfile), et la combinaison n'a pas été testée sur cette
+    # image. L'activer sans vérifier reviendrait à livrer une configuration
+    # qui ne démarre pas.
+
+volumes:
+  cowrie-var:
+  cowrie-etc:
