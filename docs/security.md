@@ -53,14 +53,20 @@ Cowrie. `ssh.socket` est désactivé, sans quoi il garderait la main sur le port
 et la configuration de `sshd` serait ignorée. Le numéro du port d'administration
 n'est pas publié dans ce dépôt.
 
-### Pas de secret sur la machine exposée
+### Un seul secret sur la machine exposée
 
 Un seul module de sortie est activé, `output_jsonlog`, qui écrit en local. Les
 quarante autres sont désactivés, ce qui évite d'avoir à stocker des jetons
 d'API, des identifiants de base de données ou des clés d'accès sur une machine
 destinée à être attaquée.
 
-Rien n'est non plus exfiltré : pas de syslog distant, pas d'export vers un tiers.
+Le seul secret présent est le nom du canal ntfy utilisé par la supervision,
+dans un fichier lisible par root seulement. Sa fuite permettrait de lire les
+alertes et d'en publier de fausses, sans donner aucun accès au serveur.
+
+Les journaux ne quittent pas la machine : pas de syslog distant, pas d'export
+vers une base. Les seules données transmises à un tiers sont les alertes de la
+supervision, qui ne contiennent que des pourcentages et des durées.
 
 ### Surface réduite
 
@@ -72,20 +78,31 @@ servi par Cowrie, et le port d'administration.
 `unattended-upgrades` est actif, avec mise à jour automatique des listes et
 application des correctifs de sécurité.
 
+### Supervision
+
+Depuis le 1er octobre 2026, `scripts/surveiller.sh` contrôle toutes les quinze
+minutes l'espace disque et la fraîcheur du dernier événement valide. Il
+compresse les journaux au-delà de 80 % d'occupation et alerte par notification
+sur téléphone. C'est la réponse directe à l'incident du 24 septembre, pendant
+lequel le honeypot est resté plus de six jours en apparence actif sans rien
+collecter (voir [exploitation.md](exploitation.md)).
+
+Le point compte aussi pour la sécurité : saturer le disque est à la portée d'un
+attaquant, et suffisait à aveugler le capteur sans que personne ne le sache.
+
+Le service de supervision est lui-même confiné. Il tourne en root pour ne pas
+dépendre du compte `cowrie`, mais systemd ne lui laisse qu'un système de
+fichiers en lecture seule, hors dossier des journaux, et trois capacités
+réservées à la compression. `systemd-analyze security` lui attribue un niveau
+d'exposition de 3,8 sur 10.
+
+Sa limite : il tourne sur la machine qu'il surveille. Une panne de l'hôte
+entier ne serait signalée par rien.
+
 ## Absent
 
 Ces points sont des manques réels, constatés à l'audit. Ils ne sont pas
 implémentés.
-
-### Aucune supervision
-
-Rien ne surveille l'espace disque ni la fraîcheur des journaux. C'est la cause
-directe de l'incident du 25 septembre 2026, pendant lequel le honeypot est resté
-six jours en apparence actif sans rien collecter
-(voir [exploitation.md](exploitation.md)).
-
-C'est le manque le plus grave, parce qu'il est aussi exploitable : saturer le
-disque est à la portée d'un attaquant, et cela suffit à aveugler le capteur.
 
 ### Aucun durcissement systemd
 
@@ -99,6 +116,10 @@ L'unité ne comporte aucune directive d'isolation ni aucune limite :
 | `MemoryMax` | illimité |
 | `CPUQuota` | non définie |
 
+`systemd-analyze security` attribue à `cowrie.service` un niveau d'exposition
+de 9,2 sur 10, qualifié de « UNSAFE ». Pour comparaison, le service de
+supervision, durci, obtient 3,8.
+
 Sur une machine à 1 Go de RAM dont le processus occupe déjà environ 290 Mo,
 l'absence de `MemoryMax` signifie qu'une fuite ou une charge anormale peut
 emporter la machine entière.
@@ -109,9 +130,12 @@ emporter la machine entière.
 règle. Le filtrage repose uniquement sur le pare-feu de l'hébergeur, qui ne
 couvre que l'entrant.
 
-L'impact immédiat est faible, puisque Cowrie n'exécute rien et ne relaie rien :
-il n'y a pas de charge utile pour émettre du trafic. Mais il n'y a aucune
-défense en profondeur. Une vulnérabilité dans Cowrie ou dans Twisted
+Cowrie n'exécute rien et ne relaie rien, mais il émet tout de même. Quand un
+attaquant lance `wget` ou `curl`, Cowrie télécharge réellement la charge pour
+la capturer : l'attaquant choisit donc vers quelle adresse le serveur envoie une
+requête, et peut s'en servir pour viser un tiers. C'est une requête par
+commande, sans relais de trafic, mais rien n'en borne la destination. Et il n'y
+a aucune défense en profondeur : une vulnérabilité dans Cowrie ou dans Twisted
 permettrait de sortir librement.
 
 ### Taille des dépôts non bornée
@@ -170,11 +194,11 @@ Corriger ces valeurs est à faible risque et figure dans les suites du
 
 Dans l'ordre, en tenant compte du rapport entre effet et effort :
 
-1. supervision de l'espace disque et de la fraîcheur des journaux, avec alerte ;
-2. `MemoryMax` et durcissement systemd sur le service ;
-3. clé publique pour l'administration, puis `PasswordAuthentication no` et
+1. `MemoryMax` et durcissement systemd sur `cowrie.service` ;
+2. clé publique pour l'administration, puis `PasswordAuthentication no` et
    désactivation de `X11Forwarding` et `AllowTcpForwarding` ;
-4. `download_limit_size` borné ;
-5. alignement des versions annoncées et du nom d'hôte du faux système de
+3. `download_limit_size` borné ;
+4. alignement des versions annoncées et du nom d'hôte du faux système de
    fichiers ;
+5. sonde extérieure au serveur, pour couvrir une panne de la machine entière ;
 6. sauvegarde des agrégats hors machine.

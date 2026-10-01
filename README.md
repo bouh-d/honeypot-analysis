@@ -61,12 +61,15 @@ honeypot en root. L'administration passe par un port distinct, géré par le
   expressions régulières ;
 - fournir trois règles Sigma écrites à partir des comportements réellement
   constatés ;
+- surveiller l'espace disque et la fraîcheur des journaux, compresser au besoin
+  et alerter par notification sur téléphone ;
 - déployer une instance de démonstration isolée, indépendante du serveur réel.
 
 ## Stack
 
 Python 3.12, bibliothèque standard uniquement. Cowrie 2.9.16 sur Ubuntu Server
-24.04 LTS, service systemd, `authbind`. Aucune base de données, aucun agent, pas
+24.04 LTS, service systemd, `authbind`. Supervision par script Bash et
+minuterie systemd, alertes via ntfy. Aucune base de données, aucun agent, pas
 de conteneur en production.
 
 ## Résultats
@@ -153,14 +156,16 @@ dans [docs/threat-model.md](docs/threat-model.md).
 
 ## Limites connues
 
-- **Le disque a saturé le 25 septembre 2026 et la collecte s'est effondrée
-  pendant six jours** : de 20 824 événements le 24 septembre à 89 le 25, puis
-  environ 400 par jour jusqu'au 1er octobre. Cowrie acceptait les connexions
-  mais ne pouvait plus écrire. Les données de cette fenêtre sont inutilisables
-  et le rapport s'arrête donc au 24 septembre. Chronologie et correctif dans
-  [docs/exploitation.md](docs/exploitation.md).
-- Aucune supervision : rien ne prévient quand la collecte s'arrête. C'est la
-  cause directe du point précédent.
+- **Le disque a saturé le 24 septembre 2026 vers 21 h 40 UTC, et la collecte
+  est restée interrompue plus de six jours.** Cowrie acceptait les connexions
+  mais ne pouvait plus écrire, et rien ne l'a signalé. Les données de cette
+  fenêtre sont inutilisables : le rapport s'arrête au dernier événement
+  enregistré avant la saturation. Chronologie dans
+  [docs/exploitation.md](docs/exploitation.md). Une supervision avec alertes
+  est en place depuis.
+- La supervision tourne sur la machine qu'elle surveille. Si le serveur entier
+  tombe, plus rien ne le signale : seule une sonde extérieure couvrirait ce
+  cas.
 - Le taux d'acceptation de 41 % n'est pas une mesure : il découle de la
   politique d'authentification par défaut de Cowrie, qui accepte `root` avec
   presque n'importe quel mot de passe. Expliqué dans le rapport.
@@ -174,7 +179,7 @@ dans [docs/threat-model.md](docs/threat-model.md).
 
 ## Suites
 
-- supervision de l'espace disque et de la fraîcheur des journaux, avec alerte ;
+- sonde extérieure au serveur, pour couvrir une panne de la machine entière ;
 - limites de ressources et durcissement systemd sur le service ;
 - alignement des versions système annoncées par Cowrie, pour réduire la
   détection ;

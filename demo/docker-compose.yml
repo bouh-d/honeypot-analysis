@@ -30,7 +30,7 @@ services:
     pids_limit: 256
     restart: unless-stopped
     # Évite qu'une démonstration oubliée remplisse le disque de l'hôte, ce qui
-    # est précisément ce qui est arrivé en production le 25 septembre 2026.
+    # est précisément ce qui est arrivé en production le 24 septembre 2026.
     logging:
       driver: json-file
       options:

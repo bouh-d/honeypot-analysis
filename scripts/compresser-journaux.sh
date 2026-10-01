@@ -4,8 +4,8 @@
 #
 # Cowrie fait tourner ses fichiers chaque jour mais ne compresse rien et ne
 # purge rien. Sur un disque de 10 Go cela mène à la saturation en quatre mois
-# environ, ce qui s'est produit le 25 septembre 2026 : le service est resté
-# actif six jours sans pouvoir écrire. Voir docs/exploitation.md.
+# environ, ce qui s'est produit le 24 septembre 2026 : le service est resté
+# actif plus de six jours sans pouvoir écrire. Voir docs/exploitation.md.
 #
 # Gain mesuré : facteur 25 environ sur les fichiers JSON.
 #

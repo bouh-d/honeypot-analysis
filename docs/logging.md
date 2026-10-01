@@ -127,7 +127,7 @@ service, ou à un disque plein, survenu en pleine écriture.
 C'est volontaire : refuser d'analyser cinq mois de données parce qu'une ligne
 est coupée serait absurde.
 
-Le cas s'est produit en vrai. La saturation du disque du 25 septembre 2026 a
+Le cas s'est produit en vrai. La saturation du disque du 24 septembre 2026 a
 laissé des écritures partielles, décrites dans [exploitation.md](exploitation.md).
 
 ## Rétention

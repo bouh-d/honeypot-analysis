@@ -117,6 +117,14 @@ Le `sshd` du système écoute sur un port haut dédié, distinct du 22. Ce servi
 n'a aucun lien avec Cowrie : il n'est ni simulé, ni journalisé par le honeypot.
 Le numéro de port n'est pas publié dans ce dépôt.
 
+### Supervision
+
+Une minuterie systemd lance [`scripts/surveiller.sh`](../scripts/surveiller.sh)
+toutes les quinze minutes. Le script contrôle l'espace disque et la fraîcheur
+du dernier événement valide, compresse les journaux au-delà de 80 %
+d'occupation, et envoie ses alertes par HTTPS au service public ntfy. Détail
+dans [exploitation.md](exploitation.md).
+
 ## Flux réseau
 
 | Sens | Port | Service | Filtrage |
@@ -129,7 +137,15 @@ Le filtrage est réalisé uniquement par le pare-feu de l'hébergeur. Aucune rè
 `iptables` ou `nftables` locale n'est en place : les politiques sont à `ACCEPT`
 et les tables vides. C'était un choix délibéré au déploiement, pour éviter deux
 jeux de règles contradictoires, mais il laisse le trafic sortant entièrement
-libre. Ce point est discuté dans [threat-model.md](threat-model.md).
+libre.
+
+En pratique, trois flux sortent du serveur : les mises à jour du système, les
+alertes de la supervision vers ntfy, et les téléchargements que Cowrie effectue
+lui-même. Ce dernier point mérite d'être souligné : quand un attaquant lance
+`wget` ou `curl` dans le shell simulé, Cowrie récupère réellement le fichier
+pour le capturer. C'est ainsi qu'ont été obtenus les 267 artefacts. La
+destination de ces requêtes est donc choisie par l'attaquant. Les conséquences
+sont discutées dans [threat-model.md](threat-model.md).
 
 ## Flux de données
 
@@ -156,7 +172,8 @@ système n'intervient, et il n'existait au départ aucune compression ni purge
 automatique, ce qui a conduit à la saturation du disque.
 
 Les fichiers quotidiens sont désormais compressés par
-[`scripts/compresser-journaux.sh`](../scripts/compresser-journaux.sh). Le gain
+[`scripts/compresser-journaux.sh`](../scripts/compresser-journaux.sh), que la
+supervision lance d'elle-même au-delà de 80 % d'occupation. Le gain
 mesuré est d'un facteur 25 environ, ce qui ramène cinq mois de journaux de 5 Go
 à moins de 400 Mo.
 
@@ -194,7 +211,8 @@ trimestre à l'autre.
 - pas de conteneur en production, le service tourne directement sur l'hôte ;
 - pas de base de données ;
 - pas de tableau de bord ni de visualisation temps réel ;
-- pas de supervision, donc aucune alerte si la collecte s'arrête ;
+- pas de sonde extérieure : la supervision tourne sur la machine qu'elle
+  surveille, et une panne de l'hôte entier ne serait signalée par rien ;
 - pas de sauvegarde hors machine des journaux ;
 - pas de limite de ressources sur le service.
 

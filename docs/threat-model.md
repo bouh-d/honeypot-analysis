@@ -28,8 +28,8 @@ proviennent des attaquants eux-mêmes.
 
 ### 1. Saturation du disque, aveuglement du capteur
 
-**Réalisé le 25 septembre 2026.** Le disque est passé à 100 %, et le honeypot est
-resté six jours en apparence actif sans rien enregistrer. Un attaquant peut
+**Réalisé le 24 septembre 2026.** Le disque est passé à 100 %, et le honeypot est
+resté plus de six jours en apparence actif sans rien enregistrer. Un attaquant peut
 provoquer la même chose intentionnellement, puisque les dépôts de fichiers ne
 sont pas bornés et les transcriptions de terminal s'écrivent à chaque session.
 
@@ -38,10 +38,14 @@ Probabilité élevée, impact élevé sur la disponibilité de la collecte.
 | Mesure | État |
 |---|---|
 | Compression des journaux, facteur 25 | **en place** |
-| Purge des transcriptions de plus de 30 jours | **en place**, manuelle |
-| Alerte sur espace libre | **absente** |
-| Alerte sur fraîcheur du dernier événement | **absente** |
+| Compression automatique au-delà de 80 % d'occupation | **en place** |
+| Alerte si la compression ne suffit pas | **en place** |
+| Alerte sur la fraîcheur du dernier événement valide | **en place** |
+| Purge des transcriptions anciennes | **absente**, commande documentée mais jamais exécutée |
 | `download_limit_size` borné | **absente** |
+
+La supervision ne couvre pas tout : elle tourne sur la machine qu'elle
+surveille. Une panne de l'hôte entier ne serait signalée par rien.
 
 ### 2. Évasion vers l'hôte réel
 
@@ -74,9 +78,14 @@ recherché activement, avec 87 052 demandes d'ouverture de tunnel.
 | Aucune exécution de charge utile | **en place** |
 | Filtrage du trafic sortant | **absent** |
 
-Les deux premières mesures suffisent en pratique aujourd'hui : rien ne peut
-émettre. Mais la troisième est ce qui rattraperait une régression de
-configuration ou une vulnérabilité, et elle manque.
+Les deux premières mesures empêchent le relais et l'exécution, pas toute
+émission. Pour capturer une charge, Cowrie la télécharge réellement, vers
+l'adresse que l'attaquant a indiquée à `wget` ou `curl`. Un attaquant peut donc
+faire envoyer au serveur une requête vers la destination de son choix, y
+compris un tiers. L'abus reste limité, une requête par commande et sans relais
+de trafic, mais rien n'en borne la destination. Le filtrage sortant manquant
+rattraperait à la fois cet usage et une régression de configuration ou une
+vulnérabilité.
 
 ### 4. Compromission de l'accès administrateur
 
@@ -107,6 +116,7 @@ occupe déjà 290 Mo. Pas besoin d'une attaque sophistiquée.
 | `idle_timeout` à 180 s, `authentication_timeout` à 120 s | **en place** |
 | `MemoryMax`, `CPUQuota` | **absentes** |
 | `Restart=on-failure` | **en place**, mais ne couvre pas le cas d'un processus vivant et bloqué |
+| Contrôle de fraîcheur des journaux | **en place**, couvre justement ce cas |
 
 ### 6. Falsification des traces
 
@@ -171,6 +181,6 @@ Les risques de compromission réelle sont bas, et pour une raison simple :
 l'absence d'exécution. Ce que l'audit met en évidence, ce n'est pas un problème
 de confidentialité ou d'intégrité, c'est un problème de **disponibilité et de
 supervision**. Le dispositif a déjà échoué une fois sur ce terrain, en silence,
-pendant six jours. Les trois mesures manquantes les plus utiles sont une alerte
-sur le disque, une alerte sur la fraîcheur des journaux, et une limite mémoire
-sur le service.
+pendant plus de six jours. Les deux alertes qui manquaient alors, sur le disque
+et sur la fraîcheur des journaux, sont en place depuis. Restent la limite
+mémoire sur `cowrie.service` et une sonde extérieure à la machine.

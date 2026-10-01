@@ -4,19 +4,36 @@
 
 ### Incident
 
-- Le disque a atteint 100 % le 25 septembre. Cowrie est resté actif mais ne
-  pouvait plus écrire : 20 824 événements le 24 septembre, 89 le 25, puis
-  environ 400 par jour. Le 1er octobre à 02 h 40, l'observateur de logs Twisted
-  a cessé d'écrire toute ligne JSON valide.
-- Panne détectée le 1er octobre à 12 h 15, soit six jours plus tard. Aucune
-  supervision ne l'a signalée. Chronologie complète dans
+- Le disque a saturé le 24 septembre vers 21 h 40 UTC. Cowrie est resté actif
+  mais ne pouvait plus écrire. Du 25 au 30 septembre, quelques centaines
+  d'événements passaient encore chaque jour, tous dans les minutes suivant le
+  basculement de minuit, puis plus rien. Le 1er octobre à 02 h 40,
+  l'observateur de logs Twisted a cessé d'écrire toute ligne JSON valide.
+- Panne détectée le 1er octobre à 12 h 15, plus de six jours plus tard. Rien ne
+  l'a signalée. Chronologie complète dans
   [docs/exploitation.md](docs/exploitation.md).
 - Espace libéré (cache APT), service redémarré, collecte vérifiée nominale.
 - Compression de l'ensemble des journaux quotidiens : de 5,0 Go à 383 Mo,
   disque ramené de 100 % à 41 %. Script ajouté au dépôt
   (`scripts/compresser-journaux.sh`).
-- La fenêtre du 25 septembre au 1er octobre est inexploitable. Le rapport de
-  référence s'arrête au 24 septembre.
+- La fenêtre du 24 septembre 21 h 40 au 1er octobre 12 h 15 est inexploitable.
+  Le rapport de référence s'arrête au dernier événement enregistré avant la
+  saturation.
+
+### Supervision
+
+- `scripts/surveiller.sh`, lancé toutes les quinze minutes par une minuterie
+  systemd. Au-delà de 80 % d'occupation du disque, il compresse les journaux et
+  n'alerte que si cela ne suffit pas. Il alerte aussi quand le dernier
+  événement JSON valide a plus de trente minutes.
+- Alertes poussées sur téléphone par ntfy, sans doublon : une à l'apparition
+  de l'anomalie, un rappel toutes les six heures, un message au retour à la
+  normale.
+- Sept scénarios testés avant la mise en service, dont le cas exact de
+  l'incident. Rejoué sur les journaux de la panne, le contrôle de fraîcheur se
+  serait déclenché le 24 septembre à 22 h 10 UTC.
+- Service confiné par systemd : niveau d'exposition de 3,8 selon
+  `systemd-analyze security`, contre 9,2 pour `cowrie.service`.
 
 ### Correction d'un double comptage
 

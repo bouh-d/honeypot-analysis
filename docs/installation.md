@@ -141,7 +141,7 @@ C'est le point qui a été sous-estimé au déploiement.
 
 Cowrie bascule son journal chaque jour, mais ne compresse rien et ne purge rien.
 Sur un disque de 10 Go, cela mène à la saturation en quatre mois environ. Rien
-n'avait été prévu, et le disque a été plein le 25 septembre 2026.
+n'avait été prévu, et le disque a saturé le 24 septembre 2026.
 
 Depuis, les journaux quotidiens sont compressés par le script du dépôt :
 
@@ -150,8 +150,29 @@ Depuis, les journaux quotidiens sont compressés par le script du dépôt :
 ./scripts/compresser-journaux.sh
 ```
 
-Le gain est d'un facteur 25 environ. Il n'est pas encore planifié : le lancer
-régulièrement, ou l'inscrire dans une minuterie systemd, reste à faire.
+Le gain est d'un facteur 25 environ. Le script est lancé automatiquement par
+la supervision dès que le disque atteint 80 %.
+
+## Supervision
+
+Mise en place après l'incident. Le fonctionnement est décrit dans
+[exploitation.md](exploitation.md) ; l'installation tient en quelques
+commandes, depuis une copie du dépôt sur le serveur :
+
+```bash
+install -d -m 755 /opt/honeypot
+install -m 755 scripts/surveiller.sh scripts/compresser-journaux.sh /opt/honeypot/
+install -m 644 config/honeypot-supervision.service \
+               config/honeypot-supervision.timer /etc/systemd/system/
+
+# configuration lisible par root seulement : elle contient le nom du canal
+install -m 600 config/honeypot-supervision.conf.exemple /etc/honeypot-supervision.conf
+# puis renseigner NTFY_TOPIC, la commande de génération est dans le fichier
+
+systemctl daemon-reload
+/opt/honeypot/surveiller.sh --test            # doit arriver sur le téléphone
+systemctl enable --now honeypot-supervision.timer
+```
 
 Les binaires déposés par les attaquants sont conservés dans
 `var/lib/cowrie/downloads/`, nommés par leur empreinte SHA-256. Ils ne sont pas
