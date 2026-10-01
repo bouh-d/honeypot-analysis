@@ -1,0 +1,4 @@
+# Le dépôt est édité depuis Windows et exécuté sous Linux. Un script shell
+# enregistré avec des fins de ligne CRLF échoue au premier "set -o pipefail".
+*.sh   text eol=lf
+Makefile text eol=lf
