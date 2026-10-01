@@ -21,8 +21,10 @@ import re
 # même motif pour que le classement reste lisible.
 REGLES: list[tuple[str, str, str]] = [
     (
-        r"\b(uname|lscpu|nproc|hostnamectl|free|vmstat)\b"
-        r"|/proc/(cpuinfo|version|meminfo)",
+        (
+            r"\b(uname|lscpu|nproc|hostnamectl|free|vmstat)\b"
+            r"|/proc/(cpuinfo|version|meminfo)"
+        ),
         "T1082",
         "System Information Discovery",
     ),
@@ -45,8 +47,10 @@ REGLES: list[tuple[str, str, str]] = [
         "Scheduled Task/Job: Cron",
     ),
     (
-        r"\brm\s+-[rf]{1,2}\b|\bshred\b|history\s+-c"
-        r"|/dev/null\s*>\s*\.bash_history",
+        (
+            r"\brm\s+-[rf]{1,2}\b|\bshred\b|history\s+-c"
+            r"|/dev/null\s*>\s*\.bash_history"
+        ),
         "T1070.004",
         "Indicator Removal: File Deletion",
     ),
@@ -61,8 +65,10 @@ REGLES: list[tuple[str, str, str]] = [
         "Resource Hijacking",
     ),
     (
-        r"\bsystemctl\s+(stop|disable|mask)\b|\bservice\s+\S+\s+stop\b"
-        r"|\b(kill|killall|pkill)\b",
+        (
+            r"\bsystemctl\s+(stop|disable|mask)\b|\bservice\s+\S+\s+stop\b"
+            r"|\b(kill|killall|pkill)\b"
+        ),
         "T1489",
         "Service Stop",
     ),

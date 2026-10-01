@@ -78,16 +78,16 @@ restent sur le serveur.</p>
 
 def espace(n: int) -> str:
     """12345 -> 12 345"""
-    return "{:,}".format(n).replace(",", " ")
+    return f"{n:,}".replace(",", " ")
 
 
 def virgule(x: float, chiffres: int = 1) -> str:
     """Séparateur décimal français."""
-    return ("%.*f" % (chiffres, x)).replace(".", ",")
+    return f"{x:.{chiffres}f}".replace(".", ",")
 
 
 def ligne_resume(libelle: str, valeur: str) -> str:
-    return '<tr><td>%s</td><td class="n">%s</td></tr>' % (libelle, valeur)
+    return f'<tr><td>{libelle}</td><td class="n">{valeur}</td></tr>'
 
 
 def tableau(
@@ -98,20 +98,12 @@ def tableau(
 ) -> str:
     corps = ""
     for valeur, n in lignes[:limite]:
-        corps += '<tr><td class="v">%s</td><td class="n">%s</td></tr>' % (
-            html.escape(str(valeur)),
-            espace(n),
-        )
+        cellule = html.escape(str(valeur))
+        corps += f'<tr><td class="v">{cellule}</td><td class="n">{espace(n)}</td></tr>'
     if not corps:
         corps = '<tr><td class="vide" colspan="2">rien a signaler</td></tr>'
-    return (
-        '<h2>%s</h2>\n<table>\n<tr><th>%s</th><th class="n">Occurrences</th></tr>\n%s</table>\n'
-        % (
-            html.escape(titre),
-            entete,
-            corps,
-        )
-    )
+    entetes = f'<tr><th>{entete}</th><th class="n">Occurrences</th></tr>'
+    return f"<h2>{html.escape(titre)}</h2>\n<table>\n{entetes}\n{corps}</table>\n"
 
 
 def note_horaire(heures: list[int]) -> str:
@@ -119,21 +111,17 @@ def note_horaire(heures: list[int]) -> str:
     pic, creux = max(heures), min(heures)
     if not pic:
         return "Aucune connexion enregistree sur la periode."
+    h_pic = heures.index(pic)
     if not creux:
         return (
-            "Maximum a %02d h (%s connexions). Au moins une heure de la journee "
-            "n'a recu aucune connexion." % (heures.index(pic), espace(pic))
+            f"Maximum a {h_pic:02d} h ({espace(pic)} connexions). Au moins une "
+            "heure de la journee n'a recu aucune connexion."
         )
+    h_creux = heures.index(creux)
     return (
-        "Maximum a %02d h (%s connexions), minimum a %02d h (%s). Le rapport "
-        "entre les deux est de %s."
-        % (
-            heures.index(pic),
-            espace(pic),
-            heures.index(creux),
-            espace(creux),
-            virgule(pic / creux),
-        )
+        f"Maximum a {h_pic:02d} h ({espace(pic)} connexions), minimum a "
+        f"{h_creux:02d} h ({espace(creux)}). Le rapport entre les deux est de "
+        f"{virgule(pic / creux)}."
     )
 
 
@@ -149,7 +137,7 @@ def construire(stats: dict[str, Any]) -> str:
             ligne_resume("dont refusees", espace(t["echecs"])),
             ligne_resume(
                 "dont acceptees",
-                "%s (%s %%)" % (espace(t["succes"]), virgule(t["taux_de_succes"])),
+                f"{espace(t['succes'])} ({virgule(t['taux_de_succes'])} %)",
             ),
             ligne_resume(
                 "Sessions ayant lance une commande",
@@ -166,11 +154,11 @@ def construire(stats: dict[str, Any]) -> str:
     # échelle à 1 pour ne pas diviser par zéro en calculant la hauteur.
     echelle = max(heures) or 1
     barres = "".join(
-        '<td><div style="height:%dpx" title="%02d h : %d connexions"></div></td>'
-        % (max(1, round(v / echelle * 90)), h, v)
+        f'<td><div style="height:{max(1, round(v / echelle * 90))}px" '
+        f'title="{h:02d} h : {v} connexions"></div></td>'
         for h, v in enumerate(heures)
     )
-    etiquettes = "".join('<td class="etiq">%02d</td>' % h for h in range(24))
+    etiquettes = "".join(f'<td class="etiq">{h:02d}</td>' for h in range(24))
 
     top = stats["top"]
     tableaux = "".join(
@@ -202,7 +190,7 @@ def construire(stats: dict[str, Any]) -> str:
             ),
             tableau(
                 "Techniques ATT&CK declenchees",
-                [("%s %s" % (tid, nom), n) for tid, nom, n in stats["mitre"]],
+                [(f"{tid} {nom}", n) for tid, nom, n in stats["mitre"]],
                 limite=20,
                 entete="Technique",
             ),
@@ -236,7 +224,7 @@ def main() -> int:
 
     with open(args.sortie, "w", encoding="utf-8") as f:
         f.write(construire(stats))
-    print("ecrit : %s" % args.sortie)
+    print(f"ecrit : {args.sortie}")
     return 0
 
 

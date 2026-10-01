@@ -1,0 +1,19 @@
+# Règles déclarées explicitement. Sans ce fichier, le résultat du lint dépend
+# des valeurs par défaut de la version de ruff installée : le passage de 0.15
+# à 0.16 a ainsi fait échouer la CI sans que le code ait changé.
+target-version = "py312"
+
+[lint]
+select = [
+    "E",    # pycodestyle
+    "F",    # pyflakes
+    "W",    # avertissements de style
+    "I",    # ordre des imports
+    "UP",   # syntaxe moderne pour la version cible
+    "ISC",  # concaténation implicite de chaînes, source classique de bogues
+    "EXE",  # cohérence entre shebang et bit d'exécution
+]
+# La longueur des lignes est confiée au formateur (ruff format). La
+# documentation de ruff déconseille d'activer E501 en même temps : les deux se
+# contredisent, et la règle signalerait aussi le CSS contenu dans une chaîne.
+ignore = ["E501"]

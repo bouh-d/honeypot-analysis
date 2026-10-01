@@ -22,8 +22,9 @@ import logging
 import os
 import sys
 from collections import Counter
-from datetime import datetime, timezone
-from typing import Any, Iterator
+from collections.abc import Iterator
+from datetime import UTC, datetime
+from typing import Any
 
 import mitre
 
@@ -187,7 +188,7 @@ def collecte(chemins: list[str]) -> dict[str, Any]:
     taux = round(totaux["succes"] / tentatives * 100, 2) if tentatives else 0.0
 
     return {
-        "genere_le": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+        "genere_le": datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC"),
         "periode": {
             "debut": premier.isoformat() if premier else None,
             "fin": dernier.isoformat() if dernier else None,
@@ -222,24 +223,22 @@ def affiche(stats: dict[str, Any]) -> None:
     """Résumé lisible dans le terminal, pour une vérification rapide."""
     t = stats["totaux"]
     p = stats["periode"]
+    debut = (p["debut"] or "?")[:10]
+    fin = (p["fin"] or "?")[:10]
     print()
-    print(
-        "Periode analysee : %s -> %s (%d jours)"
-        % ((p["debut"] or "?")[:10], (p["fin"] or "?")[:10], p["jours"])
-    )
+    print(f"Periode analysee : {debut} -> {fin} ({p['jours']} jours)")
     print("-" * 60)
-    print("Connexions                 %10d" % t["connexions"])
-    print("Adresses IP uniques        %10d" % t["ip_uniques"])
-    print("Tentatives d'authentif.    %10d" % t["tentatives"])
-    print("  dont echouees            %10d" % t["echecs"])
+    print(f"Connexions                 {t['connexions']:10d}")
+    print(f"Adresses IP uniques        {t['ip_uniques']:10d}")
+    print(f"Tentatives d'authentif.    {t['tentatives']:10d}")
+    print(f"  dont echouees            {t['echecs']:10d}")
     print(
-        "  dont reussies            %10d  (%.2f %%)"
-        % (t["succes"], t["taux_de_succes"])
+        f"  dont reussies            {t['succes']:10d}  ({t['taux_de_succes']:.2f} %)"
     )
-    print("Commandes executees        %10d" % t["commandes"])
-    print("Sessions avec commandes    %10d" % t["sessions_avec_commandes"])
-    print("Fichiers telecharges       %10d" % t["telechargements"])
-    print("Tentatives de tunnel       %10d" % t["tunnels"])
+    print(f"Commandes executees        {t['commandes']:10d}")
+    print(f"Sessions avec commandes    {t['sessions_avec_commandes']:10d}")
+    print(f"Fichiers telecharges       {t['telechargements']:10d}")
+    print(f"Tentatives de tunnel       {t['tunnels']:10d}")
 
     tableaux = [
         ("IP les plus actives", stats["top"]["ip"]),
@@ -253,14 +252,14 @@ def affiche(stats: dict[str, Any]) -> None:
         print(titre)
         print("-" * 60)
         for valeur, n in lignes[:10]:
-            print("%8d  %s" % (n, str(valeur)[:64]))
+            print(f"{n:8d}  {str(valeur)[:64]}")
 
     if stats["mitre"]:
         print()
         print("Techniques ATT&CK observees")
         print("-" * 60)
         for tid, nom, n in stats["mitre"][:12]:
-            print("%8d  %-11s %s" % (n, tid, nom))
+            print(f"{n:8d}  {tid:<11} {nom}")
     print()
 
 

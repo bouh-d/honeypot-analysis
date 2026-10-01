@@ -3,10 +3,10 @@
 import gzip
 import json
 
-import analyse
 import pytest
 from conftest import chemin_exemple
 
+import analyse
 
 # --- horodatage ---------------------------------------------------------------
 

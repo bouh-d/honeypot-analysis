@@ -2,10 +2,11 @@
 
 import json
 
-import analyse
 import pytest
 import rapport
 from conftest import chemin_exemple
+
+import analyse
 
 
 @pytest.fixture(scope="module")
