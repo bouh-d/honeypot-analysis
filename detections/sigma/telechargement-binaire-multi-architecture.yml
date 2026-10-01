@@ -1,0 +1,106 @@
+title: Téléchargement d'une charge compilée pour plusieurs architectures
+id: 162c58d4-671d-45a5-90be-1bb7af9daf62
+status: experimental
+description: |
+  Détecte le schéma de déploiement des botnets de type Mirai : un script
+  d'amorçage essaie successivement plusieurs binaires du même programme,
+  compilés pour des architectures différentes, jusqu'à ce que l'un démarre.
+  Les noms visés désignent surtout des plateformes embarquées (MIPS, ARM,
+  SuperH, ARC, Motorola 68000, LoongArch, RISC-V), que l'on ne trouve pas sur un
+  serveur classique, mais aussi les variantes i386 et i686 livrées dans les
+  mêmes kits.
+  Sur la période, les binaires capturés couvrent dix architectures.
+  Mesure sur les données réelles : la règle reconnaît 27 des 29 URL ayant servi
+  un binaire ELF, soit 93 %.
+references:
+  - https://attack.mitre.org/techniques/T1105/
+author: bouh-d
+date: 2026/10/01
+tags:
+  - attack.command_and_control
+  - attack.t1105
+logsource:
+  product: cowrie
+  service: ssh
+detection:
+  telechargement:
+    eventid:
+      - 'cowrie.command.input'
+      - 'cowrie.session.file_download'
+  # Suffixes classiques de la famille Mirai, avec point.
+  suffixes:
+    - input|contains:
+        - '.mips'
+        - '.mpsl'
+        - '.arm4'
+        - '.arm5'
+        - '.arm6'
+        - '.arm7'
+        - '.sh4'
+        - '.ppc'
+        - '.m68k'
+        - '.spc'
+        - '.x86'
+        - '.arc'
+    - url|contains:
+        - '.mips'
+        - '.mpsl'
+        - '.arm4'
+        - '.arm5'
+        - '.arm6'
+        - '.arm7'
+        - '.sh4'
+        - '.ppc'
+        - '.m68k'
+        - '.spc'
+        - '.x86'
+        - '.arc'
+  # Noms d'architecture sans séparateur, observés dans des noms du type
+  # krane_mips ou xnxnxn...aarch64. Assez spécifiques pour ne pas apparaître
+  # dans une commande anodine.
+  noms_architecture:
+    - input|contains:
+        - 'mips'
+        - 'aarch64'
+        - 'arm64'
+        - 'armv5'
+        - 'armv6'
+        - 'armv7'
+        - 'm68k'
+        - 'loongarch'
+        - 'riscv'
+        - 'powerpc'
+        - 'sparc'
+        - 'i386'
+        - 'i686'
+    - url|contains:
+        - 'mips'
+        - 'aarch64'
+        - 'arm64'
+        - 'armv5'
+        - 'armv6'
+        - 'armv7'
+        - 'm68k'
+        - 'loongarch'
+        - 'riscv'
+        - 'powerpc'
+        - 'sparc'
+        - 'i386'
+        - 'i686'
+  condition: telechargement and (suffixes or noms_architecture)
+fields:
+  - timestamp
+  - src_ip
+  - url
+  - shasum
+  - input
+  - session
+falsepositives:
+  - >-
+    Compilation croisée légitime ou distribution de microgiciels, qui
+    mentionnerait les mêmes noms. Hors de propos sur un honeypot.
+  - >-
+    Sur un serveur de production, '.arc' peut désigner une archive et 'mips'
+    peut apparaître dans un nom de paquet. À restreindre au contexte d'une
+    session non attendue.
+level: high

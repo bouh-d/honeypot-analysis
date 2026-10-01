@@ -1,0 +1,48 @@
+title: Pose d'une clé SSH dans authorized_keys via un shell compromis
+id: 8d902ad0-4b86-4480-b55e-4ce827d66587
+status: experimental
+description: |
+  Détecte la routine de persistance la plus fréquemment observée sur le
+  honeypot : l'attaquant retire les attributs immuables du dossier .ssh, le
+  détruit, le recrée et y écrit sa propre clé publique. La porte dérobée
+  obtenue survit à un changement de mot de passe et ne laisse aucun processus
+  suspect en mémoire.
+  Observé environ 42 000 fois entre avril et septembre 2026.
+references:
+  - https://attack.mitre.org/techniques/T1098/004/
+author: bouh-d
+date: 2026/10/01
+tags:
+  - attack.persistence
+  - attack.t1098.004
+logsource:
+  product: cowrie
+  service: ssh
+detection:
+  commande_authorized_keys:
+    eventid: 'cowrie.command.input'
+    input|contains: 'authorized_keys'
+  ecriture:
+    input|contains:
+      - '>'
+      - 'tee'
+  neutralisation_attributs:
+    eventid: 'cowrie.command.input'
+    input|contains:
+      - 'chattr -ia'
+      - 'lockr -ia'
+  condition: (commande_authorized_keys and ecriture) or neutralisation_attributs
+fields:
+  - timestamp
+  - src_ip
+  - session
+  - input
+falsepositives:
+  - >-
+    Administration légitime déployant une clé par SSH. Sur un honeypot il n'y a
+    par construction aucune administration légitime via le port exposé, donc
+    toute occurrence est hostile.
+  - >-
+    Sur un serveur de production cette règle serait bruyante, et devrait être
+    restreinte aux sessions dont l'authentification n'est pas attendue.
+level: high

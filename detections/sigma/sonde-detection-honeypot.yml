@@ -1,0 +1,44 @@
+title: Sonde de détection de honeypot par identifiant impossible
+id: ec5e0d32-01b7-4bfd-983c-de359e2436c2
+status: experimental
+description: |
+  Détecte les bots qui testent si le serveur accepte n'importe quel
+  identifiant. La valeur présentée ne peut correspondre à aucun compte réel ;
+  si l'authentification réussit malgré tout, le bot en déduit qu'il parle à un
+  leurre et coupe la session.
+  Les chaînes 345gs5662d34 et 3245gs5662d34 représentent à elles seules 10 %
+  des tentatives d'authentification observées entre avril et septembre 2026.
+  L'intérêt de cette règle est double : repérer la reconnaissance, et mesurer
+  la proportion de trafic que le honeypot ne retiendra pas.
+references:
+  - https://attack.mitre.org/techniques/T1592/
+author: bouh-d
+date: 2026/10/01
+tags:
+  - attack.reconnaissance
+  - attack.t1592
+logsource:
+  product: cowrie
+  service: ssh
+detection:
+  tentative:
+    eventid:
+      - 'cowrie.login.success'
+      - 'cowrie.login.failed'
+  chaines_connues:
+    - username|contains:
+        - '345gs5662d34'
+        - '3245gs5662d34'
+    - password|contains:
+        - '345gs5662d34'
+        - '3245gs5662d34'
+  condition: tentative and chaines_connues
+fields:
+  - timestamp
+  - src_ip
+  - username
+  - password
+  - session
+falsepositives:
+  - Aucun connu. Ces chaînes n'ont pas d'usage légitime.
+level: informational
