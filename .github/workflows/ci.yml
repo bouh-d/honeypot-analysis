@@ -1,0 +1,72 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      # Même version mineure que le serveur en production.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Outils
+        run: pip install pytest ruff pyyaml
+
+      - name: Lint
+        run: |
+          ruff check analyse/ tests/
+          ruff format --check analyse/ tests/
+
+      - name: Tests
+        run: pytest tests/ -q
+
+      - name: Chaîne complète sur le jeu synthétique
+        run: |
+          python analyse/analyse.py sample-data/cowrie.json.exemple -o /tmp/stats.json -s
+          python analyse/rapport.py /tmp/stats.json -o /tmp/rapport.html
+          test -s /tmp/rapport.html
+
+      - name: Les agrégats publiés se relisent
+        run: |
+          for f in resultats/*.json; do
+            python analyse/rapport.py "$f" -o /tmp/verif.html
+          done
+
+  configuration:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Shellcheck
+        run: shellcheck scripts/*.sh
+
+      - name: Règles Sigma
+        run: |
+          pip install pyyaml
+          python - <<'EOF'
+          import glob, sys, yaml
+          requis = ("title", "id", "logsource", "detection", "falsepositives", "level")
+          erreurs = 0
+          for f in sorted(glob.glob("detections/sigma/*.yml")):
+              d = yaml.safe_load(open(f, encoding="utf-8"))
+              manque = [c for c in requis if c not in d]
+              if manque or "condition" not in d.get("detection", {}):
+                  print(f"{f}: champs manquants {manque}")
+                  erreurs += 1
+              else:
+                  print(f"ok  {f}")
+          sys.exit(erreurs)
+          EOF
+
+      - name: Docker Compose de démonstration
+        run: docker compose -f demo/docker-compose.yml config --quiet
