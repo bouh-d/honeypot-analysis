@@ -1,0 +1,70 @@
+# Écarts entre la configuration en production et le cowrie.cfg.dist livré.
+# Relevés sur le serveur le 1er octobre 2026, pas reconstitués de mémoire.
+#
+# Les valeurs propres à l'hôte exposé (adresses, port d'administration) n'y
+# figurent pas.
+
+[honeypot]
+# Nom affiché par l'invite du shell simulé. La valeur livrée, "svr04", est une
+# signature connue de Cowrie.
+#
+# Attention : honeyfs/etc/hostname n'a PAS été modifié et contient toujours
+# "svr04". L'invite affiche donc ubuntu-server alors que `cat /etc/hostname`
+# renvoie svr04. Incohérence documentée dans docs/security.md, non corrigée.
+hostname = ubuntu-server
+
+
+# --- Port d'écoute ------------------------------------------------------------
+#
+# Cowrie écoute sur le 22, mais PAS grâce à ce fichier.
+#
+# La section [ssh] ne définit aucun listen_endpoints : Cowrie retombe donc sur
+# la valeur codée en dur dans src/twisted/plugins/cowrie_plugin.py. Cette
+# valeur a été modifiée à la main au déploiement :
+#
+#     ligne 244 :  get_endpoints_from_section(CowrieConfig, "ssh", 22)
+#     amont     :  get_endpoints_from_section(CowrieConfig, "ssh", 2222)
+#
+# Ce patch du code source est fragile : une mise à jour de Cowrie l'écrase, et
+# le honeypot repasserait silencieusement sur le 2222.
+#
+# La forme correcte, qui survit aux mises à jour, serait :
+#
+#     [ssh]
+#     listen_endpoints = tcp:22:interface=0.0.0.0
+#
+# Elle n'est pas appliquée en production à ce jour. Le comportement serait
+# identique (même port), mais la modification impose un redémarrage et n'a pas
+# été faite.
+
+
+[backend_pool]
+# Ligne présente en production, modifiée depuis tcp:6415:interface=127.0.0.1.
+#
+# Elle est SANS EFFET : [backend_pool] ne sert que lorsque backend = proxy.
+# Avec backend = shell, cette section n'est jamais lue. Probablement une
+# première tentative de changement de port, faite dans la mauvaise section.
+#
+# À remettre à sa valeur d'origine : si le mode proxy était activé un jour,
+# le pool tenterait d'ouvrir le 22, déjà occupé.
+listen_endpoints = tcp:22:interface=0.0.0.0
+
+
+# --- Valeurs par défaut qui comptent pour la sécurité -------------------------
+#
+# Celles-ci ne sont PAS modifiées, elles sont livrées ainsi. Elles sont
+# rappelées parce qu'une erreur sur l'une d'elles changerait la nature du
+# dispositif. À vérifier après toute mise à jour.
+#
+# [honeypot]
+# backend = shell            aucune exécution réelle sur l'hôte
+#
+# [ssh]
+# forward_tunnel = false     les demandes de tunnel sont journalisées,
+# forward_redirect = false   jamais relayées : pas de proxy ouvert
+#
+# [telnet]
+# enabled = false            seul SSH est exposé
+#
+# [output_jsonlog]
+# enabled = true             seule sortie active, écriture locale uniquement
