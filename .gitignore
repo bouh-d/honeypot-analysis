@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[co]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# Éditeurs et système
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Secrets. Aucun n'est utilisé par ce dépôt, mais un fichier de ce type posé
+# par erreur ne doit jamais partir.
+.env
+.env.*
+*.pem
+*.key
+*.crt
+id_rsa*
+id_ed25519*
+secrets/
+credentials/
+
+# Journaux bruts et artefacts récupérés sur le honeypot.
+# Ils restent sur le serveur : plusieurs gigaoctets pour les journaux, et les
+# binaires déposés par les attaquants n'ont rien à faire dans un dépôt public.
+cowrie.json*
+cowrie.log*
+archive_*.json.gz
+*.log
+downloads/
+tty/
+captures/
+logs/
+data/
+
+# Sorties par défaut des scripts, à régénérer plutôt qu'à versionner.
+# Les instantanés que l'on garde sont nommés et rangés dans resultats/.
+/stats.json
+/rapport.html
+demo/stats.json
+demo/rapport.html
+
+# Le jeu synthétique est le seul fichier JSON d'événements autorisé
+!sample-data/cowrie.json.exemple
