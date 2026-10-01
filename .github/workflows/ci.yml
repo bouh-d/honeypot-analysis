@@ -19,8 +19,10 @@ jobs:
         with:
           python-version: "3.12"
 
+      # Versions figées : sans cela, une nouvelle version de ruff peut faire
+      # échouer la CI sans que le code ait changé, ce qui s'est produit.
       - name: Outils
-        run: pip install pytest ruff pyyaml
+        run: pip install pytest==9.0.2 ruff==0.16.9 pyyaml==6.0.2
 
       - name: Lint
         run: |
@@ -52,7 +54,7 @@ jobs:
 
       - name: Règles Sigma
         run: |
-          pip install pyyaml
+          pip install pyyaml==6.0.2
           python - <<'EOF'
           import glob, sys, yaml
           requis = ("title", "id", "logsource", "detection", "falsepositives", "level")
