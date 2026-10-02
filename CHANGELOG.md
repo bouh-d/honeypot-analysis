@@ -1,5 +1,21 @@
 # Journal de bord
 
+## 2 octobre 2026 — Publication des données
+
+- Journaux du 1er avril au 1er octobre 2026 publiés en données ouvertes, sous
+  licence CC BY 4.0 : 5 462 263 événements, en sept archives mensuelles jointes
+  à une release.
+- Nouvel outil `analyse/exporter.py`. L'adresse du serveur est remplacée dans
+  tous les champs : les 835 165 connexions, mais aussi 188 bannières,
+  12 mots de passe et 3 commandes où des outils d'attaque l'avaient injectée.
+  Les champs `message`, `sensor` et `uuid` sont retirés, les 12 lignes
+  illisibles écartées. Les archives sont reproductibles.
+- Vérifié avant publication : aucune occurrence de l'adresse ni de son
+  sous-réseau dans les archives, et les chiffres du rapport retrouvés à
+  l'identique à partir des seules données publiées.
+- Ne sont pas publiés : les binaires capturés, les transcriptions de terminal,
+  où le faux `ifconfig` affiche l'adresse réelle, et `cowrie.log`.
+
 ## 2 octobre 2026 — Retrait du rapport HTML
 
 - Suppression de `rapport.py` et du rapport HTML qu'il générait. Les résultats

@@ -134,12 +134,15 @@ laissé des écritures partielles, décrites dans [exploitation.md](exploitation
 
 | Donnée | Conservation |
 |---|---|
-| `cowrie.json.AAAA-MM-JJ` | conservés, compressés |
+| `cowrie.json.AAAA-MM-JJ` | conservés, compressés ; publiés sans l'adresse du capteur |
 | `cowrie.log.AAAA-MM-JJ` | conservés, compressés |
 | `downloads/` | conservés, nommés par SHA-256, jamais publiés |
 | `tty/` | purgeables au-delà de 30 jours une fois les commandes extraites |
 | agrégats `resultats/*.json` | versionnés dans ce dépôt |
 
-Les journaux bruts ne quittent pas le serveur. Ce qui est publié, ce sont les
-agrégats : ils pèsent une quinzaine de kilo-octets et restent comparables d'une
-période à l'autre.
+Les journaux bruts restent sur le serveur. Ce qui est publié en est une copie
+préparée par `analyse/exporter.py` : adresse du capteur masquée, champs
+redondants retirés, lignes illisibles écartées. Elle est décrite dans
+[donnees.md](donnees.md). Les agrégats, eux, sont versionnés dans le dépôt : ils
+pèsent une quinzaine de kilo-octets et restent comparables d'une période à
+l'autre.

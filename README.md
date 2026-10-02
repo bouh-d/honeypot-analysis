@@ -2,8 +2,9 @@
 
 Honeypot SSH exposé sur un VPS public depuis le 1er avril 2026, avec les outils
 d'analyse des journaux qu'il produit. Le dépôt contient le code, la
-configuration réellement déployée et les résultats agrégés. Les journaux bruts
-et les binaires capturés restent sur le serveur.
+configuration réellement déployée et les résultats agrégés. Les journaux
+eux-mêmes sont publiés en données ouvertes ; seuls les binaires capturés restent
+sur le serveur.
 
 ## Présentation
 
@@ -61,6 +62,8 @@ honeypot en root. L'administration passe par un port distinct, géré par le
 
 - agréger plusieurs mois de journaux JSON en un seul passage, y compris les
   fichiers compressés, sans charger les événements en mémoire ;
+- préparer ces journaux pour une publication ouverte, en masquant l'adresse du
+  serveur partout où elle apparaît ;
 - rattacher les commandes observées à des techniques MITRE ATT&CK par
   expressions régulières ;
 - fournir trois règles Sigma écrites à partir des comportements réellement
@@ -117,6 +120,18 @@ tout ce qui expose un SSH.
 
 Analyse détaillée dans [docs/rapport-2026-04_2026-09.md](docs/rapport-2026-04_2026-09.md),
 correspondance ATT&CK dans [docs/mitre-attck.md](docs/mitre-attck.md).
+
+## Données ouvertes
+
+Les journaux complets sont publiés sous licence CC BY 4.0 : 5 462 263 événements
+du 1er avril au 1er octobre 2026, en archives mensuelles jointes à une
+[release](https://github.com/bouh-d/honeypot-analysis/releases/tag/donnees-2026-04-01-au-2026-10-01). L'adresse du serveur y est remplacée partout, y compris là où
+des outils d'attaque l'avaient injectée. Tout le reste est publié tel
+qu'enregistré, adresses IP sources comprises. À partir de ces seuls fichiers,
+`analyse.py` retrouve à l'identique les chiffres ci-dessus.
+
+Contenu, transformations, limites et citation :
+[docs/donnees.md](docs/donnees.md).
 
 ## Installation
 
@@ -199,4 +214,5 @@ dans [docs/threat-model.md](docs/threat-model.md).
 
 ## Licence
 
-MIT, voir [LICENSE](LICENSE).
+Code sous licence MIT, voir [LICENSE](LICENSE). Données sous licence
+CC BY 4.0, voir [LICENCE-DONNEES.md](LICENCE-DONNEES.md).

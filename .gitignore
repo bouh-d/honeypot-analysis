@@ -29,9 +29,10 @@ credentials/
 # qui fait office de secret. Seul le fichier .exemple est versionné.
 honeypot-supervision.conf
 
-# Journaux bruts et artefacts récupérés sur le honeypot.
-# Ils restent sur le serveur : plusieurs gigaoctets pour les journaux, et les
-# binaires déposés par les attaquants n'ont rien à faire dans un dépôt public.
+# Journaux bruts et artefacts récupérés sur le honeypot : jamais versionnés.
+# Les journaux sont publiés à part, préparés, dans une release GitHub (voir
+# docs/donnees.md). Les binaires déposés par les attaquants ne sont jamais
+# publiés.
 cowrie.json*
 cowrie.log*
 archive_*.json.gz

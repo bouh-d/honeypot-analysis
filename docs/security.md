@@ -64,9 +64,24 @@ Le seul secret présent est le nom du canal ntfy utilisé par la supervision,
 dans un fichier lisible par root seulement. Sa fuite permettrait de lire les
 alertes et d'en publier de fausses, sans donner aucun accès au serveur.
 
-Les journaux ne quittent pas la machine : pas de syslog distant, pas d'export
-vers une base. Les seules données transmises à un tiers sont les alertes de la
-supervision, qui ne contiennent que des pourcentages et des durées.
+Les journaux ne partent pas en continu : pas de syslog distant, pas d'export
+vers une base. En temps réel, les seules données transmises à un tiers sont les
+alertes de la supervision, qui ne contiennent que des pourcentages et des
+durées. La publication des journaux en données ouvertes est une opération
+manuelle, décrite ci-dessous.
+
+### Données publiées sans l'adresse du serveur
+
+Les journaux sont publiés en données ouvertes (voir [donnees.md](donnees.md)).
+Retirer le champ de destination n'aurait pas suffi : des outils d'attaque
+avaient glissé l'adresse du serveur dans 188 bannières, 12 mots de passe et
+3 commandes. L'export la remplace donc dans tous les champs. Elle lui est passée
+en argument et n'apparaît nulle part dans le dépôt.
+
+Avant publication, le contenu même des archives a été relu : aucune occurrence
+de l'adresse, ni d'aucune autre du même sous-réseau. Les transcriptions de
+terminal ne sont pas publiées : le faux `ifconfig` de Cowrie y affiche
+l'adresse réelle, avec l'adresse de diffusion qui révèle le sous-réseau.
 
 ### Surface réduite
 
