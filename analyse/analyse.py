@@ -9,7 +9,8 @@ restent en mémoire, jamais les événements.
     python3 analyse.py /home/cowrie/cowrie/var/log/cowrie
     python3 analyse.py cowrie.json.2026-04-* -o resultats/avril.json
 
-Le fichier produit est repris par rapport.py pour la version HTML.
+Le fichier JSON produit est l'agrégat que l'on archive dans resultats/ ; un
+résumé est aussi affiché dans le terminal.
 """
 
 from __future__ import annotations
@@ -219,6 +220,23 @@ def collecte(chemins: list[str]) -> dict[str, Any]:
     }
 
 
+def lisible(valeur: Any, largeur: int = 64) -> str:
+    """Rend une valeur venue d'un attaquant sûre à afficher dans un terminal.
+
+    Identifiants, mots de passe et commandes sont choisis par l'attaquant. Un
+    caractère de contrôle, une séquence d'échappement ANSI par exemple, serait
+    interprété par le terminal de l'analyste : on le remplace par sa forme
+    \\xNN.
+    """
+    texte = str(valeur)[:largeur]
+    return "".join(
+        c
+        if c.isprintable()
+        else (f"\\x{ord(c):02x}" if ord(c) < 0x100 else f"\\u{ord(c):04x}")
+        for c in texte
+    )
+
+
 def affiche(stats: dict[str, Any]) -> None:
     """Résumé lisible dans le terminal, pour une vérification rapide."""
     t = stats["totaux"]
@@ -252,7 +270,7 @@ def affiche(stats: dict[str, Any]) -> None:
         print(titre)
         print("-" * 60)
         for valeur, n in lignes[:10]:
-            print(f"{n:8d}  {str(valeur)[:64]}")
+            print(f"{n:8d}  {lisible(valeur)}")
 
     if stats["mitre"]:
         print()

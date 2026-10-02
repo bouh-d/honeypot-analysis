@@ -140,17 +140,25 @@ Sans copie distante, la perte du VPS reste une perte totale, même sans attaque.
 ### 7. Injection dans les journaux
 
 Les identifiants, mots de passe et commandes sont des chaînes contrôlées par
-l'attaquant, et elles finissent dans les journaux puis dans les rapports.
+l'attaquant. Elles finissent dans les journaux, puis dans les résumés que
+`analyse.py` affiche au terminal.
 
 | Mesure | État |
 |---|---|
 | Sortie JSON, échappement assuré par la bibliothèque standard | **en place** |
-| Échappement HTML de toute valeur dans le rapport (`html.escape`) | **en place** |
+| Neutralisation des caractères de contrôle à l'affichage terminal | **en place** |
 | Troncature des commandes à 200 caractères | **en place** |
 | Lecture tolérante aux lignes illisibles | **en place** |
 
-C'est traité. Le rapport HTML échappe systématiquement les valeurs issues des
-journaux, y compris les noms d'utilisateur et les lignes de commande.
+Le risque concret est celui du terminal de l'analyste : une séquence
+d'échappement glissée dans un mot de passe serait interprétée à l'affichage.
+Les journaux de la période n'en contiennent aucune, mais 13 événements portent
+d'autres caractères de contrôle. `analyse.py` les remplace par leur forme
+`\xNN` avant de les afficher.
+
+Le rejeu d'une session avec `playlog`, l'outil fourni par Cowrie, restitue en
+revanche le flux du terminal tel quel, séquences comprises. C'est le principe
+même de l'outil, à réserver à des sessions dont le contenu a été vérifié.
 
 ### 8. Détection du honeypot
 

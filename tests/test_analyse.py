@@ -142,3 +142,41 @@ def test_aucun_evenement(tmp_path):
     assert stats["totaux"]["connexions"] == 0
     assert stats["totaux"]["taux_de_succes"] == 0.0
     assert stats["periode"]["debut"] is None
+
+
+# --- affichage au terminal ----------------------------------------------------
+
+
+def test_lisible_neutralise_les_sequences_d_echappement():
+    """Une séquence ANSI dans un mot de passe ne doit pas atteindre le terminal."""
+    assert analyse.lisible("\x1b[2Jroot") == r"\x1b[2Jroot"
+    assert analyse.lisible("a\x00b\x7fc") == r"a\x00b\x7fc"
+
+
+def test_lisible_conserve_le_texte_normal():
+    assert analyse.lisible("éàü 123456 中文") == "éàü 123456 中文"
+
+
+def test_lisible_tronque_avant_neutralisation():
+    assert analyse.lisible("x" * 100) == "x" * 64
+
+
+def test_affiche_ne_laisse_passer_aucun_caractere_de_controle(tmp_path, capsys):
+    chemin = tmp_path / "cowrie.json.2026-04-01"
+    chemin.write_text(
+        json.dumps(
+            {
+                "eventid": "cowrie.login.failed",
+                "username": "root",
+                "password": "\x1b]0;titre\x07piege",
+                "src_ip": "203.0.113.1",
+                "timestamp": "2026-04-01T00:00:00Z",
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    analyse.affiche(analyse.collecte([str(chemin)]))
+    sortie = capsys.readouterr().out
+    assert "\x1b" not in sortie and "\x07" not in sortie
+    assert r"\x1b]0;titre\x07piege" in sortie
