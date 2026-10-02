@@ -42,8 +42,6 @@ flowchart TD
     cowrie --> tty[("tty/<br/>transcriptions de terminal")]
     json --> analyse["analyse/analyse.py<br/>lecture en flux"]
     analyse --> stats[("resultats/*.json<br/>agrégats")]
-    stats --> rapport["analyse/rapport.py"]
-    rapport --> html[("rapport HTML autonome")]
     admin[Administration] -->|TCP, port haut dédié| sshd[sshd système]
 ```
 
@@ -56,7 +54,6 @@ honeypot en root. L'administration passe par un port distinct, géré par le
 
 - agréger plusieurs mois de journaux JSON en un seul passage, y compris les
   fichiers compressés, sans charger les événements en mémoire ;
-- produire un rapport HTML autonome, sans dépendance ni CDN ;
 - rattacher les commandes observées à des techniques MITRE ATT&CK par
   expressions régulières ;
 - fournir trois règles Sigma écrites à partir des comportements réellement
@@ -122,7 +119,6 @@ Les outils d'analyse se lancent sans installation :
 
 ```bash
 python3 analyse/analyse.py chemin/vers/les/journaux -o resultats/stats.json
-python3 analyse/rapport.py resultats/stats.json -o resultats/rapport.html
 ```
 
 Un `Makefile` regroupe les cibles courantes (`make test`, `make lint`,

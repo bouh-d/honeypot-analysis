@@ -32,16 +32,15 @@ jobs:
       - name: Tests
         run: pytest tests/ -q
 
-      - name: Chaîne complète sur le jeu synthétique
+      - name: Analyse complète du jeu synthétique
         run: |
-          python analyse/analyse.py sample-data/cowrie.json.exemple -o /tmp/stats.json -s
-          python analyse/rapport.py /tmp/stats.json -o /tmp/rapport.html
-          test -s /tmp/rapport.html
+          python analyse/analyse.py sample-data/ -o /tmp/stats.json
+          test -s /tmp/stats.json
 
       - name: Les agrégats publiés se relisent
         run: |
           for f in resultats/*.json; do
-            python analyse/rapport.py "$f" -o /tmp/verif.html
+            python -c "import json, sys; d = json.load(open(sys.argv[1])); assert d['totaux']['connexions'] > 0" "$f"
           done
 
   configuration:

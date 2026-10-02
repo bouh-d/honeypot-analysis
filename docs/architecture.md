@@ -189,8 +189,6 @@ flowchart LR
     logs[("cowrie.json.*<br/>compressés ou non")] --> a["analyse.py<br/>lecture ligne par ligne"]
     m["mitre.py<br/>règles d'expressions régulières"] --> a
     a --> s[("stats.json<br/>agrégats")]
-    s --> r["rapport.py"]
-    r --> h[("rapport HTML autonome")]
     s --> t["tests/"]
 ```
 

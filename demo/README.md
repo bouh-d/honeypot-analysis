@@ -41,10 +41,10 @@ cd ~ && rm -rf .ssh && mkdir .ssh && echo "ssh-rsa EXEMPLE" > .ssh/authorized_ke
 ```bash
 docker compose cp cowrie-demo:/cowrie/cowrie-git/var/log/cowrie/cowrie.json ./cowrie.json
 python3 ../analyse/analyse.py ./cowrie.json -o ./stats.json
-python3 ../analyse/rapport.py ./stats.json -o ./rapport.html
 ```
 
-Le `rapport.html` produit est autonome : ouvrez-le dans un navigateur.
+Le résumé s'affiche dans le terminal, et `stats.json` contient l'agrégat
+complet, au même format que ceux de [../resultats/](../resultats/).
 
 Si vous préférez ne rien lancer du tout, des événements synthétiques
 représentatifs sont fournis dans [../sample-data/](../sample-data/) et

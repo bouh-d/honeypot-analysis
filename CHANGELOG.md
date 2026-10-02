@@ -1,5 +1,16 @@
 # Journal de bord
 
+## 2 octobre 2026 — Retrait du rapport HTML
+
+- Suppression de `rapport.py` et du rapport HTML qu'il générait. Les résultats
+  sont présentés par le rapport rédigé en Markdown, et les visuels par des
+  captures d'écran d'outils réels plutôt que par une page construite pour
+  l'occasion.
+- `analyse.py` neutralise désormais les caractères de contrôle des chaînes
+  qu'il affiche au terminal : identifiants, mots de passe et commandes viennent
+  des attaquants. Aucune séquence d'échappement dans les journaux de la
+  période, mais 13 événements contiennent d'autres caractères de contrôle.
+
 ## 1er octobre 2026 — Incident disque, audit et remise à plat
 
 ### Incident

@@ -45,9 +45,7 @@ data/
 # Sorties par défaut des scripts, à régénérer plutôt qu'à versionner.
 # Les instantanés que l'on garde sont nommés et rangés dans resultats/.
 /stats.json
-/rapport.html
 demo/stats.json
-demo/rapport.html
 
 # Le jeu synthétique est le seul fichier JSON d'événements autorisé
 !sample-data/cowrie.json.exemple
