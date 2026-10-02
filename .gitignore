@@ -38,7 +38,8 @@ archive_*.json.gz
 *.log
 downloads/
 tty/
-captures/
+*.pcap
+*.pcapng
 logs/
 data/
 

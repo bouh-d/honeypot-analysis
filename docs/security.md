@@ -120,6 +120,8 @@ L'unité ne comporte aucune directive d'isolation ni aucune limite :
 de 9,2 sur 10, qualifié de « UNSAFE ». Pour comparaison, le service de
 supervision, durci, obtient 3,8.
 
+![Niveaux d'exposition mesurés par systemd-analyze](captures/06-securite-systemd.png)
+
 Sur une machine à 1 Go de RAM dont le processus occupe déjà environ 290 Mo,
 l'absence de `MemoryMax` signifie qu'une fuite ou une charge anormale peut
 emporter la machine entière.

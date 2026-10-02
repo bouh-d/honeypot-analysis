@@ -17,6 +17,13 @@ qu'il simule un shell Linux sans jamais exécuter de commande réelle. L'attaqua
 obtient une invite, un faux système de fichiers et des sorties crédibles, mais
 aucun processus n'est lancé sur l'hôte.
 
+![Session d'attaquant du 13 juin 2026 rejouée avec playlog](docs/captures/01-rejeu-session.png)
+
+Une session réelle du 13 juin 2026, rejouée avec `playlog`, l'outil fourni avec
+Cowrie. L'attaquant reçoit la bannière Debian simulée, cherche un dossier où
+écrire, puis télécharge un dropper et un binaire pour processeur ARM. Rien ne
+s'exécute : les fichiers sont seulement capturés.
+
 Ce qui est enregistré pour chaque session :
 
 - connexion entrante, IP et port source, horodatage UTC ;
@@ -85,6 +92,12 @@ Période du 1er avril au 24 septembre 2026, soit 177 jours de collecte continue.
 
 Soit 4 660 connexions par jour en moyenne, avec une progression continue :
 67 551 connexions en avril contre 199 263 en août.
+
+![Résumé produit par analyse.py sur les 177 fichiers quotidiens](docs/captures/02-analyse.png)
+
+Les mêmes chiffres, tels que les produit `analyse.py` sur le serveur.
+L'avertissement sur trois lignes illisibles du 24 septembre est une trace réelle
+de l'incident : des écritures coupées au moment où le disque a saturé.
 
 Trois observations qui ressortent des données :
 

@@ -10,6 +10,12 @@
   qu'il affiche au terminal : identifiants, mots de passe et commandes viennent
   des attaquants. Aucune séquence d'échappement dans les journaux de la
   période, mais 13 événements contiennent d'autres caractères de contrôle.
+- Six captures d'écran dans `docs/captures/`, prises sur de vraies fenêtres :
+  un terminal ouvert sur une session SSH au serveur, et l'application web de
+  ntfy. Rejeu de deux sessions d'attaquants avec `playlog`, analyse en ligne de
+  commande, supervision, alerte, et niveaux d'exposition mesurés par
+  `systemd-analyze`. Aucune ne montre l'adresse du serveur ni le nom du canal
+  d'alerte.
 
 ## 1er octobre 2026 — Incident disque, audit et remise à plat
 
