@@ -16,6 +16,8 @@
   commande, supervision, alerte, et niveaux d'exposition mesurés par
   `systemd-analyze`. Aucune ne montre l'adresse du serveur ni le nom du canal
   d'alerte.
+- Notifications de la supervision envoyées sans étiquettes : ntfy les
+  convertissait en émojis. La priorité reste signalée par ntfy lui-même.
 
 ## 1er octobre 2026 — Incident disque, audit et remise à plat
 

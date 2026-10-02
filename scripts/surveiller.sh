@@ -58,21 +58,20 @@ charger_configuration() {
 # Publication au format JSON, qui accepte l'UTF-8 dans le titre, contrairement
 # aux en-têtes HTTP. Priorités ntfy : 3 normale, 4 haute, 5 urgente.
 notifier() {
-    local priorite="$1" titre="$2" message="$3" tags="${4:-}"
+    local priorite="$1" titre="$2" message="$3"
     if [ -z "$NTFY_TOPIC" ]; then
         journal "NTFY_TOPIC vide, notification non envoyée : $titre"
         return 0
     fi
     local charge
     charge=$(TOPIC="$NTFY_TOPIC" TITRE="$titre" MSG="$message" \
-             PRIO="$priorite" TAGS="$tags" python3 -c '
+             PRIO="$priorite" python3 -c '
 import json, os
 print(json.dumps({
     "topic": os.environ["TOPIC"],
     "title": os.environ["TITRE"],
     "message": os.environ["MSG"],
     "priority": int(os.environ["PRIO"]),
-    "tags": [t for t in os.environ["TAGS"].split(",") if t],
 }))')
     if curl -fsS --max-time 15 -H "Content-Type: application/json" \
             -d "$charge" "$NTFY_SERVEUR" > /dev/null; then
@@ -95,24 +94,24 @@ etat_ecrire() {
 # Décide s'il faut prévenir, d'après l'état mémorisé du contrôle. Si l'envoi
 # échoue, l'état n'est pas mis à jour : la tentative reprend au passage suivant.
 evaluer() {
-    local controle="$1" en_anomalie="$2" titre="$3" detail="$4" tags="$5"
-    local titre_retour="$6"
+    local controle="$1" en_anomalie="$2" titre="$3" detail="$4"
+    local titre_retour="$5"
     local etat derniere maintenant
     read -r etat derniere < <(etat_lire "$controle")
     maintenant=$(date +%s)
 
     if [ "$en_anomalie" -eq 1 ]; then
         if [ "$etat" != alerte ]; then
-            notifier 5 "Honeypot : $titre" "$detail" "$tags,rotating_light" \
+            notifier 5 "Honeypot : $titre" "$detail" \
                 && etat_ecrire "$controle" "alerte $maintenant"
         elif [ $((maintenant - derniere)) -ge $((RAPPEL_HEURES * 3600)) ]; then
-            notifier 4 "Honeypot, toujours en cours : $titre" "$detail" "$tags" \
+            notifier 4 "Honeypot, toujours en cours : $titre" "$detail" \
                 && etat_ecrire "$controle" "alerte $maintenant"
         else
             journal "$controle : anomalie déjà signalée"
         fi
     elif [ "$etat" = alerte ]; then
-        notifier 3 "Honeypot : $titre_retour" "$detail" "white_check_mark" \
+        notifier 3 "Honeypot : $titre_retour" "$detail" \
             && etat_ecrire "$controle" "ok 0"
     else
         journal "$controle : normal ($detail)"
@@ -146,10 +145,10 @@ Intervention nécessaire : la collecte s'arrête à 100 %."
             detail="Disque revenu à $apres %."
             notifier 3 "Honeypot : journaux compressés" \
                 "Le disque avait atteint $avant %. Compression effectuée, retour à $apres %." \
-                "package" || true
+                || true
         fi
     fi
-    evaluer disque "$anomalie" "disque presque plein" "$detail" "floppy_disk" \
+    evaluer disque "$anomalie" "disque presque plein" "$detail" \
         "espace disque revenu à la normale"
 }
 
@@ -211,7 +210,7 @@ vérifier cowrie.log et l'espace disque."
     else
         detail="dernier événement il y a $((age / 60)) min"
     fi
-    evaluer fraicheur "$anomalie" "collecte interrompue" "$detail" "warning" \
+    evaluer fraicheur "$anomalie" "collecte interrompue" "$detail" \
         "collecte rétablie"
 }
 
@@ -221,8 +220,7 @@ main() {
 
     if [ "${1:-}" = "--test" ]; then
         notifier 3 "Honeypot : notification de test" \
-            "La supervision est en place. Disque à $(utilisation_disque) %." \
-            "test_tube"
+            "La supervision est en place. Disque à $(utilisation_disque) %."
         exit "$ECHEC_ENVOI"
     fi
 
